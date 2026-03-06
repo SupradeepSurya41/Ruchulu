@@ -1,0 +1,239 @@
+version: "3.9"
+
+# ═══════════════════════════════════════════════════════════════════
+#  Ruchulu — Full Stack docker-compose
+#
+#  Start everything:   docker-compose up -d
+#  Stop everything:    docker-compose down
+#  Logs (all):         docker-compose logs -f
+#  Logs (one service): docker-compose logs -f booking-service
+#
+#  Services:
+#    api-gateway          → http://localhost:8080
+#    user-service         → http://localhost:8081
+#    caterer-service      → http://localhost:8082
+#    booking-service      → http://localhost:8083
+#    notification-service → http://localhost:8084
+#    postgres             → localhost:5432
+#    pgadmin              → http://localhost:5050
+# ═══════════════════════════════════════════════════════════════════
+
+services:
+
+  # ── PostgreSQL ────────────────────────────────────────────────────
+  postgres:
+    image: postgres:15-alpine
+    container_name: ruchulu-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ruchulu_admin
+      POSTGRES_PASSWORD: ruchulu_pass
+      POSTGRES_MULTIPLE_DATABASES: ruchulu_users,ruchulu_caterers,ruchulu_bookings,ruchulu_notifications
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ruchulu_admin"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ruchulu-net
+
+  # ── PgAdmin (optional DB browser) ────────────────────────────────
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: ruchulu-pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@ruchulu.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    ports:
+      - "5050:80"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ruchulu-net
+
+  # ── Redis (rate limiting for API Gateway) ────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: ruchulu-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ruchulu-net
+
+  # ── User Service (port 8081) ──────────────────────────────────────
+  user-service:
+    build:
+      context: ../ruchulu-complete/user-service
+      dockerfile: ../../ruchulu-docker/Dockerfile.service
+    container_name: ruchulu-user-service
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: postgres
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ruchulu_users
+      DB_USERNAME: ruchulu_admin
+      DB_PASSWORD: ruchulu_pass
+      JWT_SECRET: ${JWT_SECRET:-cnVjaHVsdS1qd3Qtc2VjcmV0LWtleS1tdXN0LWJlLWF0LWxlYXN0LTI1Ni1iaXRzLWxvbmctZm9yLWhzMjU2}
+      MAIL_USERNAME: ${MAIL_USERNAME:-ruchulu.noreply@gmail.com}
+      MAIL_PASSWORD: ${MAIL_PASSWORD:-your-app-password}
+      SERVER_PORT: 8081
+    ports:
+      - "8081:8081"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8081/api/v1/users/ping || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    networks:
+      - ruchulu-net
+
+  # ── Caterer Service (port 8082) ───────────────────────────────────
+  caterer-service:
+    build:
+      context: ../ruchulu-complete/caterer-service
+      dockerfile: ../../ruchulu-docker/Dockerfile.service
+    container_name: ruchulu-caterer-service
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: postgres
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ruchulu_caterers
+      DB_USERNAME: ruchulu_admin
+      DB_PASSWORD: ruchulu_pass
+      JWT_SECRET: ${JWT_SECRET:-cnVjaHVsdS1qd3Qtc2VjcmV0LWtleS1tdXN0LWJlLWF0LWxlYXN0LTI1Ni1iaXRzLWxvbmctZm9yLWhzMjU2}
+      SERVER_PORT: 8082
+    ports:
+      - "8082:8082"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8082/api/v1/caterers/ping || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    networks:
+      - ruchulu-net
+
+  # ── Booking Service (port 8083) ───────────────────────────────────
+  booking-service:
+    build:
+      context: ../ruchulu-complete/booking-service
+      dockerfile: ../../ruchulu-docker/Dockerfile.service
+    container_name: ruchulu-booking-service
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: postgres
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ruchulu_bookings
+      DB_USERNAME: ruchulu_admin
+      DB_PASSWORD: ruchulu_pass
+      JWT_SECRET: ${JWT_SECRET:-cnVjaHVsdS1qd3Qtc2VjcmV0LWtleS1tdXN0LWJlLWF0LWxlYXN0LTI1Ni1iaXRzLWxvbmctZm9yLWhzMjU2}
+      SERVER_PORT: 8083
+    ports:
+      - "8083:8083"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8083/api/v1/bookings/ping || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    networks:
+      - ruchulu-net
+
+  # ── Notification Service (port 8084) ──────────────────────────────
+  notification-service:
+    build:
+      context: ../ruchulu-complete/notification-service
+      dockerfile: ../../ruchulu-docker/Dockerfile.service
+    container_name: ruchulu-notification-service
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: postgres
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ruchulu_notifications
+      DB_USERNAME: ruchulu_admin
+      DB_PASSWORD: ruchulu_pass
+      JWT_SECRET: ${JWT_SECRET:-cnVjaHVsdS1qd3Qtc2VjcmV0LWtleS1tdXN0LWJlLWF0LWxlYXN0LTI1Ni1iaXRzLWxvbmctZm9yLWhzMjU2}
+      MAIL_USERNAME: ${MAIL_USERNAME:-ruchulu.noreply@gmail.com}
+      MAIL_PASSWORD: ${MAIL_PASSWORD:-your-app-password}
+      SERVER_PORT: 8084
+    ports:
+      - "8084:8084"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8084/api/v1/notifications/ping || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    networks:
+      - ruchulu-net
+
+  # ── API Gateway (port 8080) ───────────────────────────────────────
+  api-gateway:
+    build:
+      context: ../ruchulu-complete/api-gateway
+      dockerfile: ../../ruchulu-docker/Dockerfile.service
+    container_name: ruchulu-api-gateway
+    restart: unless-stopped
+    environment:
+      JWT_SECRET: ${JWT_SECRET:-cnVjaHVsdS1qd3Qtc2VjcmV0LWtleS1tdXN0LWJlLWF0LWxlYXN0LTI1Ni1iaXRzLWxvbmctZm9yLWhzMjU2}
+      USER_SERVICE_URL: http://user-service:8081
+      CATERER_SERVICE_URL: http://caterer-service:8082
+      BOOKING_SERVICE_URL: http://booking-service:8083
+      NOTIFICATION_SERVICE_URL: http://notification-service:8084
+      REDIS_HOST: redis
+      SERVER_PORT: 8080
+    ports:
+      - "8080:8080"
+    depends_on:
+      user-service:
+        condition: service_healthy
+      caterer-service:
+        condition: service_healthy
+      booking-service:
+        condition: service_healthy
+      notification-service:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - ruchulu-net
+
+# ── Volumes ───────────────────────────────────────────────────────
+volumes:
+  postgres_data:
+    driver: local
+
+# ── Networks ──────────────────────────────────────────────────────
+networks:
+  ruchulu-net:
+    driver: bridge

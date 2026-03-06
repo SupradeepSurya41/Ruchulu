@@ -1,0 +1,126 @@
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - http://localhost:3000
+              - http://localhost:5500
+              - http://127.0.0.1:5500
+              - https://ruchulu.netlify.app
+            allowedMethods: [GET, POST, PUT, PATCH, DELETE, OPTIONS]
+            allowedHeaders: ["*"]
+            allowCredentials: true
+            maxAge: 3600
+
+      # ── Default filters applied to ALL routes ──
+      default-filters:
+        - name: RequestRateLimiter
+          args:
+            redis-rate-limiter.replenishRate: 20
+            redis-rate-limiter.burstCapacity: 40
+            redis-rate-limiter.requestedTokens: 1
+
+      routes:
+        # ── User Service — port 8081 ──────────────────────────────────────
+        - id: user-service-auth
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/v1/auth/**,/api/v1/otp/**
+          filters:
+            - StripPrefix=0
+            - name: CircuitBreaker
+              args:
+                name: userServiceCB
+                fallbackUri: forward:/fallback/user-service
+
+        - id: user-service-users
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/v1/users/**
+          filters:
+            - StripPrefix=0
+            - name: JwtAuthenticationFilter
+
+        # ── Caterer Service — port 8082 ───────────────────────────────────
+        - id: caterer-service-public
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/v1/caterers/search,/api/v1/caterers/search/**,
+                    /api/v1/caterers/top-rated/**,/api/v1/caterers/ping
+          filters:
+            - StripPrefix=0
+
+        - id: caterer-service-public-detail
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/v1/caterers/{id}/reviews,/api/v1/caterers/{id}/menu
+          filters:
+            - StripPrefix=0
+
+        - id: caterer-service-protected
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/v1/caterers/**
+          filters:
+            - StripPrefix=0
+            - name: JwtAuthenticationFilter
+
+        # ── Booking Service — port 8083 ───────────────────────────────────
+        - id: booking-service-ping
+          uri: http://localhost:8083
+          predicates:
+            - Path=/api/v1/bookings/ping
+          filters:
+            - StripPrefix=0
+
+        - id: booking-service-protected
+          uri: http://localhost:8083
+          predicates:
+            - Path=/api/v1/bookings/**,/api/v1/admin/bookings/**
+          filters:
+            - StripPrefix=0
+            - name: JwtAuthenticationFilter
+
+        # ── Notification Service — port 8084 ──────────────────────────────
+        - id: notification-service-internal
+          uri: http://localhost:8084
+          predicates:
+            - Path=/api/v1/notifications/send,/api/v1/notifications/send/**,
+                    /api/v1/notifications/ping
+          filters:
+            - StripPrefix=0
+
+        - id: notification-service-protected
+          uri: http://localhost:8084
+          predicates:
+            - Path=/api/v1/notifications/**
+          filters:
+            - StripPrefix=0
+            - name: JwtAuthenticationFilter
+
+server:
+  port: 8080
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:cnVjaHVsdS1qd3Qtc2VjcmV0LWtleS1tdXN0LWJlLWF0LWxlYXN0LTI1Ni1iaXRzLWxvbmctZm9yLWhzMjU2}
+  rate-limit:
+    enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway,metrics
+  endpoint:
+    gateway:
+      enabled: true
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    com.ruchulu: DEBUG

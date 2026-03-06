@@ -1,0 +1,38 @@
+package com.ruchulu.notificationservice.model;
+
+public enum NotificationType {
+    // Auth & Account
+    OTP_LOGIN,
+    OTP_EMAIL_VERIFY,
+    OTP_PASSWORD_RESET,
+    ACCOUNT_CREATED,
+    ACCOUNT_VERIFIED,
+    PASSWORD_CHANGED,
+
+    // Caterer
+    CATERER_PROFILE_SUBMITTED,
+    CATERER_PROFILE_APPROVED,
+    CATERER_PROFILE_REJECTED,
+
+    // Booking — Customer
+    BOOKING_CREATED,
+    BOOKING_CONFIRMED,
+    BOOKING_REJECTED,
+    BOOKING_CANCELLED,
+    BOOKING_IN_PROGRESS,
+    BOOKING_COMPLETED,
+    BOOKING_EXPIRED,
+    BOOKING_REMINDER_24H,
+    BOOKING_REMINDER_1H,
+    PAYMENT_RECEIVED,
+
+    // Booking — Caterer
+    NEW_BOOKING_REQUEST,
+    BOOKING_CANCELLED_BY_CUSTOMER,
+
+    // Review
+    REVIEW_RECEIVED,
+
+    // Admin
+    ADMIN_ALERT
+}

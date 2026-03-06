@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Find Caterers — Ruchulu 🥄</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <script></script>
+</head>
+<body>
+<nav class="navbar">
+  <a href="../index.html" class="nav-brand">Ruchulu 🥄</a>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="search.html" style="color:var(--brown)">Find Caterers</a></li>
+    <li><a href="dashboard.html">My Bookings</a></li>
+  </ul>
+  <div class="nav-auth" id="nav-auth"></div>
+  <button class="hamburger"><span></span><span></span><span></span></button>
+</nav>
+
+<div class="page-header">
+  <div class="container">
+    <h1>Find the Perfect Caterer</h1>
+    <p>500+ verified caterers across 12 cities in AP & Telangana</p>
+    <div class="search-bar" style="max-width:700px;margin-top:1.5rem">
+      <input type="text" id="q-city" placeholder="📍 City" list="cities-list" style="flex:1;min-width:120px">
+      <datalist id="cities-list">
+        <option>Hyderabad</option><option>Visakhapatnam</option><option>Vijayawada</option>
+        <option>Warangal</option><option>Tirupati</option><option>Guntur</option>
+        <option>Karimnagar</option><option>Nellore</option><option>Kurnool</option>
+        <option>Nizamabad</option><option>Rajahmundry</option><option>Secunderabad</option>
+      </datalist>
+      <div class="search-divider"></div>
+      <input type="number" id="q-guests" placeholder="👥 Guests" min="1" style="flex:0 0 110px">
+      <button class="btn btn-primary" onclick="applyFilters()">Search</button>
+    </div>
+  </div>
+</div>
+
+<section class="section" style="padding-top:2rem">
+  <div class="container">
+    <div class="layout-sidebar">
+
+      <!-- FILTER PANEL -->
+      <aside class="filter-panel">
+        <h3 style="margin-bottom:1.25rem">🎛️ Filters</h3>
+
+        <div class="filter-section">
+          <h4>Occasion</h4>
+          <label class="filter-check"><input type="checkbox" value="WEDDING"> Wedding</label>
+          <label class="filter-check"><input type="checkbox" value="BIRTHDAY"> Birthday</label>
+          <label class="filter-check"><input type="checkbox" value="CORPORATE"> Corporate</label>
+          <label class="filter-check"><input type="checkbox" value="ENGAGEMENT"> Engagement</label>
+          <label class="filter-check"><input type="checkbox" value="ANNIVERSARY"> Anniversary</label>
+          <label class="filter-check"><input type="checkbox" value="HOUSE_WARMING"> House Warming</label>
+          <label class="filter-check"><input type="checkbox" value="BABY_SHOWER"> Baby Shower</label>
+          <label class="filter-check"><input type="checkbox" value="FESTIVAL"> Festival</label>
+        </div>
+
+        <div class="filter-section">
+          <h4>Budget (per plate)</h4>
+          <div style="display:flex;gap:.5rem;align-items:center;margin-bottom:.75rem">
+            <input type="number" class="form-control" id="f-min-price" placeholder="Min ₹" style="flex:1">
+            <span style="color:var(--text-lt)">—</span>
+            <input type="number" class="form-control" id="f-max-price" placeholder="Max ₹" style="flex:1">
+          </div>
+        </div>
+
+        <div class="filter-section">
+          <h4>Rating</h4>
+          <label class="filter-check"><input type="radio" name="rating" value="4.5"> 4.5+ ⭐⭐⭐⭐⭐</label>
+          <label class="filter-check"><input type="radio" name="rating" value="4.0"> 4.0+ ⭐⭐⭐⭐</label>
+          <label class="filter-check"><input type="radio" name="rating" value="3.5"> 3.5+</label>
+          <label class="filter-check"><input type="radio" name="rating" value=""> Any</label>
+        </div>
+
+        <div class="filter-section">
+          <h4>Cuisine Type</h4>
+          <label class="filter-check"><input type="checkbox" value="ANDHRA"> Andhra</label>
+          <label class="filter-check"><input type="checkbox" value="TELANGANA"> Telangana</label>
+          <label class="filter-check"><input type="checkbox" value="SOUTH_INDIAN"> South Indian</label>
+          <label class="filter-check"><input type="checkbox" value="NORTH_INDIAN"> North Indian</label>
+          <label class="filter-check"><input type="checkbox" value="MUGHLAI"> Mughlai</label>
+          <label class="filter-check"><input type="checkbox" value="CHINESE"> Chinese</label>
+        </div>
+
+        <div class="filter-section">
+          <h4>Preferences</h4>
+          <label class="filter-check"><input type="checkbox" id="f-veg"> Vegetarian Only</label>
+          <label class="filter-check"><input type="checkbox" id="f-fssai"> FSSAI Verified</label>
+        </div>
+
+        <button class="btn btn-primary" style="width:100%;margin-top:.5rem" onclick="applyFilters()">Apply Filters</button>
+        <button class="btn btn-outline" style="width:100%;margin-top:.5rem" onclick="clearFilters()">Clear All</button>
+      </aside>
+
+      <!-- RESULTS -->
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:.75rem">
+          <div id="result-count" style="font-weight:500;color:var(--text-lt)">Loading caterers...</div>
+          <select class="form-control" style="width:auto" id="sort-by" onchange="applyFilters()">
+            <option value="rating">Sort: Top Rated</option>
+            <option value="price_asc">Price: Low to High</option>
+            <option value="price_desc">Price: High to Low</option>
+            <option value="reviews">Most Reviewed</option>
+          </select>
+        </div>
+        <div class="grid-3" id="results-grid">
+          <div class="loading-wrap" style="grid-column:1/-1"><div class="spinner"></div></div>
+        </div>
+        <div style="text-align:center;margin-top:2rem;display:none" id="load-more-wrap">
+          <button class="btn btn-outline" onclick="loadMore()">Load More Caterers</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="toast-container"></div>
+<script src="../api-config.js"></script>
+<script src="../js/api.js"></script>
+<script>
+let currentPage = 0;
+let currentResults = [];
+
+// Read URL params on load
+window.addEventListener('DOMContentLoaded', () => {
+  const p = new URLSearchParams(location.search);
+  if (p.get('city'))     document.getElementById('q-city').value = p.get('city');
+  if (p.get('guests'))   document.getElementById('q-guests').value = p.get('guests');
+  if (p.get('occasion')) {
+    const cb = document.querySelector(`input[value="${p.get('occasion')}"]`);
+    if (cb) cb.checked = true;
+  }
+  loadCaterers();
+});
+
+async function loadCaterers(append = false) {
+  if (!append) { currentPage = 0; currentResults = []; }
+  const params = buildParams();
+  try {
+    const data = await API.searchCaterers(params);
+    const list = data.data?.content || data.content || data.data || data || [];
+    currentResults = append ? [...currentResults, ...list] : list;
+
+    const grid = document.getElementById('results-grid');
+    if (!currentResults.length) {
+      grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
+        <span class="empty-icon">🔍</span>
+        <h3>No caterers found</h3>
+        <p>Try adjusting your filters or search in a different city.</p>
+      </div>`;
+      document.getElementById('result-count').textContent = '0 caterers found';
+      document.getElementById('load-more-wrap').style.display = 'none';
+      return;
+    }
+
+    grid.innerHTML = currentResults.map(renderCatererCard).join('');
+    document.getElementById('result-count').textContent = `${currentResults.length} caterers found`;
+    document.getElementById('load-more-wrap').style.display = list.length === 12 ? '' : 'none';
+  } catch (e) {
+    // Demo fallback data
+    const demo = [
+      {id:'cat-001',businessName:'Lakshmi Catering Services',city:'Hyderabad',averageRating:4.8,totalReviews:234,minGuests:50,maxGuests:5000,minPricePerPlate:350,maxPricePerPlate:800,fssaiVerified:true,occasions:['WEDDING','CORPORATE']},
+      {id:'cat-002',businessName:'Royal Feast Caterers',city:'Hyderabad',averageRating:4.6,totalReviews:187,minGuests:100,maxGuests:3000,minPricePerPlate:400,maxPricePerPlate:900,fssaiVerified:true,occasions:['WEDDING','ENGAGEMENT']},
+      {id:'cat-003',businessName:'Sri Venkateswara Caterers',city:'Hyderabad',averageRating:4.5,totalReviews:142,minGuests:50,maxGuests:2000,minPricePerPlate:280,maxPricePerPlate:600,fssaiVerified:false,occasions:['BIRTHDAY','FESTIVAL']},
+      {id:'cat-004',businessName:'Andhra Ruchulu',city:'Vijayawada',averageRating:4.7,totalReviews:98,minGuests:100,maxGuests:4000,minPricePerPlate:300,maxPricePerPlate:700,fssaiVerified:true,occasions:['WEDDING','ANNIVERSARY']},
+      {id:'cat-005',businessName:'Coastal Flavours',city:'Visakhapatnam',averageRating:4.4,totalReviews:76,minGuests:50,maxGuests:1500,minPricePerPlate:320,maxPricePerPlate:750,fssaiVerified:true,occasions:['CORPORATE','BIRTHDAY']},
+      {id:'cat-006',businessName:'Spice Garden Caterers',city:'Hyderabad',averageRating:4.3,totalReviews:55,minGuests:30,maxGuests:1000,minPricePerPlate:250,maxPricePerPlate:550,fssaiVerified:false,occasions:['BIRTHDAY','HOUSE_WARMING']},
+    ];
+    document.getElementById('results-grid').innerHTML = demo.map(renderCatererCard).join('');
+    document.getElementById('result-count').textContent = `${demo.length} caterers (demo data)`;
+  }
+}
+
+function buildParams() {
+  const params = { page: currentPage, size: 12 };
+  const city = document.getElementById('q-city').value.trim();
+  const guests = document.getElementById('q-guests').value;
+  const minPrice = document.getElementById('f-min-price').value;
+  const maxPrice = document.getElementById('f-max-price').value;
+  const rating = document.querySelector('input[name="rating"]:checked')?.value;
+  const veg = document.getElementById('f-veg').checked;
+  const fssai = document.getElementById('f-fssai').checked;
+  const occasions = [...document.querySelectorAll('.filter-section input[type=checkbox]:checked')]
+    .filter(cb => cb.value && !['on'].includes(cb.value) && !cb.id)
+    .map(cb => cb.value);
+  const sort = document.getElementById('sort-by').value;
+
+  if (city)      params.city = city;
+  if (guests)    params.guestCount = guests;
+  if (minPrice)  params.minPricePerPlate = minPrice;
+  if (maxPrice)  params.maxPricePerPlate = maxPrice;
+  if (rating)    params.minRating = rating;
+  if (veg)       params.vegetarianOnly = true;
+  if (fssai)     params.fssaiVerified = true;
+  if (occasions.length) params.occasion = occasions[0];
+  if (sort === 'price_asc')  params.sortBy = 'minPricePerPlate';
+  if (sort === 'price_desc') { params.sortBy = 'minPricePerPlate'; params.sortDir = 'desc'; }
+  if (sort === 'reviews')    params.sortBy = 'totalReviews';
+  return params;
+}
+
+function applyFilters() { loadCaterers(false); }
+function loadMore()     { currentPage++; loadCaterers(true); }
+function clearFilters() {
+  document.querySelectorAll('.filter-section input').forEach(i => {
+    if (i.type === 'checkbox' || i.type === 'radio') i.checked = false;
+    else i.value = '';
+  });
+  document.getElementById('q-city').value = '';
+  document.getElementById('q-guests').value = '';
+  applyFilters();
+}
+</script>
+</body>
+</html>

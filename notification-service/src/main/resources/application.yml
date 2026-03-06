@@ -1,0 +1,88 @@
+spring:
+  application:
+    name: notification-service
+  profiles:
+    active: h2
+
+server:
+  port: 8084
+  servlet:
+    context-path: /api/v1
+
+---
+spring:
+  config:
+    activate:
+      on-profile: h2
+  datasource:
+    url: jdbc:h2:mem:ruchulu_notifications;DB_CLOSE_DELAY=-1;MODE=PostgreSQL
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME:ruchulu.noreply@gmail.com}
+    password: ${MAIL_PASSWORD:app-password}
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    cache: false
+
+---
+spring:
+  config:
+    activate:
+      on-profile: postgres
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:ruchulu_notifications}
+    driver-class-name: org.postgresql.Driver
+    username: ${DB_USERNAME:ruchulu_admin}
+    password: ${DB_PASSWORD:ruchulu_pass}
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+
+---
+app:
+  jwt:
+    secret: ${JWT_SECRET:cnVjaHVsdS1qd3Qtc2VjcmV0LWtleS1tdXN0LWJlLWF0LWxlYXN0LTI1Ni1iaXRzLWxvbmctZm9yLWhzMjU2}
+  cors:
+    allowed-origins:
+      - http://localhost:3000
+      - http://localhost:5500
+      - http://127.0.0.1:5500
+      - https://ruchulu.netlify.app
+  notification:
+    retry-max-attempts: 3
+    retry-delay-seconds: 30
+    batch-size: 50
+    from-email: "Ruchulu 🥄 <ruchulu.noreply@gmail.com>"
+    from-name: "Ruchulu 🥄"
+
+logging:
+  level:
+    com.ruchulu: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics

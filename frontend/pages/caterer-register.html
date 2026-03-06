@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register Your Catering Business — Ruchulu 🥄</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<nav class="navbar">
+  <a href="../index.html" class="nav-brand">Ruchulu 🥄</a>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="search.html">Find Caterers</a></li>
+  </ul>
+  <div class="nav-auth" id="nav-auth"></div>
+  <button class="hamburger"><span></span><span></span><span></span></button>
+</nav>
+
+<div class="page-header">
+  <div class="container">
+    <h1>Join Ruchulu as a Caterer</h1>
+    <p>Register your catering business and reach thousands of customers across AP & Telangana</p>
+  </div>
+</div>
+
+<section class="section" style="padding-top:2rem">
+  <div class="container" style="max-width:760px">
+
+    <!-- Benefits -->
+    <div class="grid-3" style="margin-bottom:3rem">
+      <div style="text-align:center"><div style="font-size:2rem;margin-bottom:.5rem">📈</div><h3 style="font-size:1rem">Grow Your Business</h3><p style="font-size:.85rem">Get discovered by thousands of customers actively looking for caterers</p></div>
+      <div style="text-align:center"><div style="font-size:2rem;margin-bottom:.5rem">✅</div><h3 style="font-size:1rem">Free to Register</h3><p style="font-size:.85rem">No upfront cost. We charge a small commission only on confirmed bookings.</p></div>
+      <div style="text-align:center"><div style="font-size:2rem;margin-bottom:.5rem">🛡️</div><h3 style="font-size:1rem">FSSAI Badge</h3><p style="font-size:.85rem">Get verified and stand out with our FSSAI-Verified badge</p></div>
+    </div>
+
+    <div class="card">
+      <div class="card-body" style="padding:2rem">
+        <h2 style="margin-bottom:1.5rem;font-size:1.5rem">Business Information</h2>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+          <div class="form-group"><label class="form-label">Business Name *</label><input type="text" class="form-control" id="c-name" placeholder="e.g. Lakshmi Catering Services"></div>
+          <div class="form-group"><label class="form-label">Owner Name *</label><input type="text" class="form-control" id="c-owner" placeholder="Your full name"></div>
+        </div>
+
+        <div class="form-group"><label class="form-label">Business Description *</label><textarea class="form-control" id="c-desc" rows="3" placeholder="Tell customers about your experience, specialities, and what makes you unique..."></textarea></div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+          <div class="form-group"><label class="form-label">City *</label>
+            <select class="form-control" id="c-city">
+              <option value="">Select city</option>
+              <option>Hyderabad</option><option>Visakhapatnam</option><option>Vijayawada</option>
+              <option>Warangal</option><option>Tirupati</option><option>Guntur</option>
+              <option>Karimnagar</option><option>Nellore</option><option>Kurnool</option>
+              <option>Nizamabad</option><option>Rajahmundry</option><option>Secunderabad</option>
+            </select>
+          </div>
+          <div class="form-group"><label class="form-label">Phone Number *</label><input type="tel" class="form-control" id="c-phone" placeholder="9876543210" maxlength="10"></div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+          <div class="form-group"><label class="form-label">Min Guests *</label><input type="number" class="form-control" id="c-min-guests" placeholder="e.g. 50" min="1"></div>
+          <div class="form-group"><label class="form-label">Max Guests *</label><input type="number" class="form-control" id="c-max-guests" placeholder="e.g. 5000" max="10000"></div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+          <div class="form-group"><label class="form-label">Min Price/Plate (₹) *</label><input type="number" class="form-control" id="c-min-price" placeholder="e.g. 300" min="50"></div>
+          <div class="form-group"><label class="form-label">Max Price/Plate (₹) *</label><input type="number" class="form-control" id="c-max-price" placeholder="e.g. 800"></div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+          <div class="form-group"><label class="form-label">FSSAI License No. (optional)</label><input type="text" class="form-control" id="c-fssai" placeholder="14-digit FSSAI number" maxlength="14"></div>
+          <div class="form-group"><label class="form-label">Years of Experience</label><input type="number" class="form-control" id="c-exp" placeholder="e.g. 10" min="0" max="100"></div>
+        </div>
+
+        <h3 style="margin:1.5rem 0 1rem;font-size:1rem">Occasions You Serve *</h3>
+        <div style="display:flex;flex-wrap:wrap;gap:.75rem;margin-bottom:1.5rem">
+          ${['WEDDING','BIRTHDAY','CORPORATE','ENGAGEMENT','ANNIVERSARY','HOUSE_WARMING','BABY_SHOWER','GRADUATION','FESTIVAL','FUNERAL','THREAD_CEREMONY','OTHER'].map(o =>
+            `<label style="display:flex;align-items:center;gap:.4rem;font-size:.9rem;cursor:pointer"><input type="checkbox" name="occasions" value="${o}" style="accent-color:var(--brown)"> ${o.replace(/_/g,' ')}</label>`
+          ).join('')}
+        </div>
+
+        <h3 style="margin:0 0 1rem;font-size:1rem">Cuisine Types *</h3>
+        <div style="display:flex;flex-wrap:wrap;gap:.75rem;margin-bottom:1.5rem">
+          ${['ANDHRA','TELANGANA','SOUTH_INDIAN','NORTH_INDIAN','MUGHLAI','CHINESE','CONTINENTAL','INDO_CHINESE','BIRYANI','STREET_FOOD'].map(c =>
+            `<label style="display:flex;align-items:center;gap:.4rem;font-size:.9rem;cursor:pointer"><input type="checkbox" name="cuisines" value="${c}" style="accent-color:var(--brown)"> ${c.replace(/_/g,' ')}</label>`
+          ).join('')}
+        </div>
+
+        <h3 style="margin:0 0 1rem;font-size:1rem">Food Options</h3>
+        <div style="display:flex;gap:2rem;margin-bottom:1.5rem">
+          <label style="display:flex;align-items:center;gap:.5rem;cursor:pointer"><input type="checkbox" id="c-veg" style="accent-color:var(--brown)"> 🟢 Vegetarian Available</label>
+          <label style="display:flex;align-items:center;gap:.5rem;cursor:pointer"><input type="checkbox" id="c-nonveg" style="accent-color:var(--brown)"> 🔴 Non-Vegetarian Available</label>
+        </div>
+
+        <button class="btn btn-primary btn-lg" style="width:100%" id="btn-submit" onclick="submitRegistration()">
+          🚀 Submit for Review
+        </button>
+        <p style="font-size:.82rem;color:var(--text-lt);text-align:center;margin-top:.75rem">
+          Your profile will be reviewed by our team within 24-48 hours. You'll receive an email once approved.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="toast-container"></div>
+<script src="../api-config.js"></script>
+<script src="../js/api.js"></script>
+<script>
+async function submitRegistration() {
+  if (!Auth.isLoggedIn()) {
+    toast('Please sign in first to register as a caterer.', 'error');
+    setTimeout(() => window.location.href = '../index.html', 1500); return;
+  }
+
+  const occasions = [...document.querySelectorAll('input[name="occasions"]:checked')].map(i=>i.value);
+  const cuisines  = [...document.querySelectorAll('input[name="cuisines"]:checked')].map(i=>i.value);
+
+  const data = {
+    businessName:      document.getElementById('c-name').value.trim(),
+    ownerName:         document.getElementById('c-owner').value.trim(),
+    description:       document.getElementById('c-desc').value.trim(),
+    city:              document.getElementById('c-city').value,
+    phone:             document.getElementById('c-phone').value.trim(),
+    minGuests:         parseInt(document.getElementById('c-min-guests').value),
+    maxGuests:         parseInt(document.getElementById('c-max-guests').value),
+    minPricePerPlate:  parseFloat(document.getElementById('c-min-price').value),
+    maxPricePerPlate:  parseFloat(document.getElementById('c-max-price').value),
+    fssaiLicenseNo:    document.getElementById('c-fssai').value.trim(),
+    yearsExperience:   parseInt(document.getElementById('c-exp').value) || 0,
+    vegetarianAvailable:    document.getElementById('c-veg').checked,
+    nonVegetarianAvailable: document.getElementById('c-nonveg').checked,
+    occasions, cuisines,
+  };
+
+  if (!data.businessName || !data.city || !data.minGuests || !data.maxGuests || !occasions.length || !cuisines.length) {
+    toast('Please fill in all required fields and select at least one occasion and cuisine.', 'error'); return;
+  }
+
+  const btn = document.getElementById('btn-submit');
+  setLoading(btn, true);
+  try {
+    await API.registerCaterer(data);
+    toast('Profile submitted! Our team will review it within 48 hours. 🎉', 'success');
+    setTimeout(() => window.location.href = 'caterer-dashboard.html', 2500);
+  } catch (e) {
+    toast(e.message || 'Submission failed. Please try again.', 'error');
+  } finally { setLoading(btn, false); }
+}
+</script>
+</body>
+</html>

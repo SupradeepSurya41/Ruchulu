@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Caterer Details — Ruchulu 🥄</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<nav class="navbar">
+  <a href="../index.html" class="nav-brand">Ruchulu 🥄</a>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="search.html">Find Caterers</a></li>
+    <li><a href="dashboard.html">My Bookings</a></li>
+  </ul>
+  <div class="nav-auth" id="nav-auth"></div>
+  <button class="hamburger"><span></span><span></span><span></span></button>
+</nav>
+
+<div id="caterer-hero" style="margin-top:68px;height:340px;background:linear-gradient(135deg,var(--brown),var(--brown-lt));display:flex;align-items:flex-end">
+  <div class="container" style="padding-bottom:2rem;color:#fff">
+    <div id="hero-skeleton" style="display:flex;flex-direction:column;gap:.75rem">
+      <div style="width:300px;height:36px;background:rgba(255,255,255,.2);border-radius:8px"></div>
+      <div style="width:200px;height:20px;background:rgba(255,255,255,.15);border-radius:8px"></div>
+    </div>
+    <div id="hero-content" style="display:none">
+      <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.5rem">
+        <span id="hero-badge" class="cat-badge verified" style="position:static"></span>
+      </div>
+      <h1 id="hero-name" style="color:#fff;margin-bottom:.5rem"></h1>
+      <div style="display:flex;gap:1.5rem;flex-wrap:wrap;opacity:.85;font-size:.95rem">
+        <span id="hero-city">📍</span>
+        <span id="hero-rating">⭐</span>
+        <span id="hero-guests">👥</span>
+        <span id="hero-price">💰</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="section" style="padding-top:2rem">
+  <div class="container">
+    <div style="display:grid;grid-template-columns:1fr 360px;gap:2rem;align-items:start" id="main-grid">
+
+      <!-- LEFT: Details -->
+      <div>
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="overview">Overview</button>
+          <button class="tab-btn" data-tab="menu">Menu</button>
+          <button class="tab-btn" data-tab="reviews">Reviews</button>
+        </div>
+
+        <!-- OVERVIEW -->
+        <div class="tab-pane active" data-tab="overview">
+          <div class="card" style="margin-bottom:1.5rem">
+            <div class="card-body">
+              <h3 style="margin-bottom:1rem">About</h3>
+              <p id="about-text">Loading...</p>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1.5rem" id="about-grid"></div>
+            </div>
+          </div>
+          <div class="card" style="margin-bottom:1.5rem">
+            <div class="card-body">
+              <h3 style="margin-bottom:1rem">Occasions Served</h3>
+              <div id="occasions-list" class="cat-tags"></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-body">
+              <h3 style="margin-bottom:1rem">Cuisines</h3>
+              <div id="cuisines-list" class="cat-tags"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- MENU -->
+        <div class="tab-pane" data-tab="menu">
+          <div id="menu-content"><div class="loading-wrap"><div class="spinner"></div></div></div>
+        </div>
+
+        <!-- REVIEWS -->
+        <div class="tab-pane" data-tab="reviews">
+          <div id="reviews-summary" style="background:var(--cream-dk);border-radius:var(--radius);padding:1.5rem;margin-bottom:1.5rem;display:flex;gap:2rem;align-items:center;flex-wrap:wrap">
+            <div style="text-align:center">
+              <div style="font-family:'Playfair Display',serif;font-size:3.5rem;font-weight:700;color:var(--brown)" id="avg-rating">—</div>
+              <div class="stars" id="avg-stars" style="font-size:1.2rem"></div>
+              <div style="font-size:.85rem;color:var(--text-lt)" id="total-reviews"></div>
+            </div>
+            <div style="flex:1">
+              <div id="rating-bars"></div>
+            </div>
+          </div>
+          <div id="reviews-list"><div class="loading-wrap"><div class="spinner"></div></div></div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Book Now card -->
+      <div style="position:sticky;top:80px">
+        <div class="card">
+          <div class="card-body">
+            <h3 style="margin-bottom:1.5rem">Book This Caterer</h3>
+            <div class="form-group">
+              <label class="form-label">Occasion</label>
+              <select class="form-control" id="book-occasion">
+                <option value="">Select occasion</option>
+                <option value="WEDDING">Wedding</option>
+                <option value="BIRTHDAY">Birthday</option>
+                <option value="CORPORATE">Corporate</option>
+                <option value="ENGAGEMENT">Engagement</option>
+                <option value="ANNIVERSARY">Anniversary</option>
+                <option value="HOUSE_WARMING">House Warming</option>
+                <option value="BABY_SHOWER">Baby Shower</option>
+                <option value="GRADUATION">Graduation</option>
+                <option value="FESTIVAL">Festival</option>
+                <option value="FUNERAL">Funeral</option>
+                <option value="OTHER">Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Event Date</label>
+              <input type="date" class="form-control" id="book-date">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Number of Guests</label>
+              <input type="number" class="form-control" id="book-guests" placeholder="e.g. 200" min="1">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Event City</label>
+              <select class="form-control" id="book-city">
+                <option value="">Select city</option>
+                <option>Hyderabad</option><option>Visakhapatnam</option><option>Vijayawada</option>
+                <option>Warangal</option><option>Tirupati</option><option>Guntur</option>
+                <option>Karimnagar</option><option>Nellore</option><option>Kurnool</option>
+                <option>Nizamabad</option><option>Rajahmundry</option><option>Secunderabad</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Event Address</label>
+              <input type="text" class="form-control" id="book-address" placeholder="Full venue address">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Special Requests (optional)</label>
+              <textarea class="form-control" id="book-notes" rows="2" placeholder="Dietary needs, themes..."></textarea>
+            </div>
+
+            <!-- Price estimate -->
+            <div id="price-estimate" style="background:var(--cream-dk);border-radius:var(--radius-sm);padding:1rem;margin-bottom:1rem;display:none">
+              <div style="display:flex;justify-content:space-between;margin-bottom:.4rem">
+                <span style="font-size:.9rem;color:var(--text-lt)">Estimated Total</span>
+                <strong id="est-total"></strong>
+              </div>
+              <div style="display:flex;justify-content:space-between">
+                <span style="font-size:.85rem;color:var(--text-lt)">Advance (20%)</span>
+                <span id="est-advance" style="font-size:.85rem;color:var(--success);font-weight:600"></span>
+              </div>
+            </div>
+
+            <button class="btn btn-primary btn-lg" style="width:100%" id="btn-book" onclick="submitBooking()">
+              📅 Send Booking Request
+            </button>
+            <p style="font-size:.78rem;color:var(--text-lt);text-align:center;margin-top:.75rem">
+              Free to request · Caterer responds in 48h
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="toast-container"></div>
+<script src="../api-config.js"></script>
+<script src="../js/api.js"></script>
+<script>
+const catererId = new URLSearchParams(location.search).get('id');
+let catererData = null;
+
+// Set min date to tomorrow
+const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1);
+document.getElementById('book-date').min = tomorrow.toISOString().split('T')[0];
+
+// Price estimate on guest change
+['book-guests','book-occasion'].forEach(id => {
+  document.getElementById(id)?.addEventListener('input', updateEstimate);
+});
+
+async function loadCaterer() {
+  if (!catererId) { toast('Caterer not found', 'error'); return; }
+  try {
+    const res = await API.getCaterer(catererId);
+    catererData = res.data || res;
+    renderHero(catererData);
+    renderOverview(catererData);
+    loadMenu();
+    loadReviews();
+  } catch (e) {
+    // Demo caterer
+    catererData = {id:catererId,businessName:'Lakshmi Catering Services',city:'Hyderabad',description:'Award-winning caterers serving Hyderabad since 1998. Specialising in traditional Andhra and Telangana cuisine for weddings, corporate events and all celebrations.',averageRating:4.8,totalReviews:234,minGuests:50,maxGuests:5000,minPricePerPlate:350,maxPricePerPlate:800,fssaiVerified:true,vegetarianAvailable:true,nonVegetarianAvailable:true,occasions:['WEDDING','CORPORATE','BIRTHDAY','ENGAGEMENT'],cuisines:['ANDHRA','TELANGANA','SOUTH_INDIAN'],ownerName:'Smt. Lakshmi Devi',phone:'9876543210',yearsExperience:25};
+    renderHero(catererData);
+    renderOverview(catererData);
+    loadMenu();
+    loadReviews();
+  }
+}
+
+function renderHero(c) {
+  document.getElementById('hero-skeleton').style.display = 'none';
+  document.getElementById('hero-content').style.display = '';
+  document.getElementById('hero-name').textContent = c.businessName;
+  document.getElementById('hero-city').textContent = '📍 ' + c.city;
+  document.getElementById('hero-rating').textContent = `⭐ ${(c.averageRating||0).toFixed(1)} (${c.totalReviews||0} reviews)`;
+  document.getElementById('hero-guests').textContent = `👥 ${c.minGuests}–${c.maxGuests} guests`;
+  document.getElementById('hero-price').textContent = `💰 ₹${c.minPricePerPlate}–₹${c.maxPricePerPlate}/plate`;
+  const badge = document.getElementById('hero-badge');
+  badge.textContent = c.fssaiVerified ? '✓ FSSAI Verified' : 'Registered';
+  document.title = c.businessName + ' — Ruchulu 🥄';
+}
+
+function renderOverview(c) {
+  document.getElementById('about-text').textContent = c.description || 'No description available.';
+  document.getElementById('about-grid').innerHTML = `
+    <div><strong>Owner</strong><br><span style="color:var(--text-lt)">${c.ownerName||'—'}</span></div>
+    <div><strong>Experience</strong><br><span style="color:var(--text-lt)">${c.yearsExperience||'—'} years</span></div>
+    <div><strong>Veg</strong><br><span style="color:var(--text-lt)">${c.vegetarianAvailable?'✅ Available':'❌ No'}</span></div>
+    <div><strong>Non-Veg</strong><br><span style="color:var(--text-lt)">${c.nonVegetarianAvailable?'✅ Available':'❌ No'}</span></div>`;
+  document.getElementById('occasions-list').innerHTML = (c.occasions||[]).map(o =>
+    `<span class="tag">${o.replace(/_/g,' ')}</span>`).join('');
+  document.getElementById('cuisines-list').innerHTML = (c.cuisines||[]).map(cu =>
+    `<span class="tag">${cu.replace(/_/g,' ')}</span>`).join('');
+}
+
+async function loadMenu() {
+  try {
+    const res = await API.getMenu(catererId);
+    const items = res.data || res || [];
+    const byCategory = items.reduce((acc,item) => {
+      acc[item.category] = acc[item.category] || [];
+      acc[item.category].push(item); return acc;
+    }, {});
+    document.getElementById('menu-content').innerHTML = Object.entries(byCategory).map(([cat,items]) => `
+      <div style="margin-bottom:2rem">
+        <h3 style="margin-bottom:1rem;color:var(--brown);font-size:1rem;text-transform:uppercase;letter-spacing:.5px">${cat.replace(/_/g,' ')}</h3>
+        <div style="display:flex;flex-direction:column;gap:.75rem">
+          ${items.map(item => `
+            <div style="display:flex;justify-content:space-between;align-items:start;padding:1rem;background:var(--cream-dk);border-radius:var(--radius-sm)">
+              <div>
+                <div style="font-weight:500">${item.isVegetarian?'🟢':'🔴'} ${item.name}</div>
+                ${item.description?`<div style="font-size:.85rem;color:var(--text-lt);margin-top:.25rem">${item.description}</div>`:''}
+              </div>
+              <div style="font-weight:600;color:var(--brown);white-space:nowrap;margin-left:1rem">₹${item.pricePerPlate}/plate</div>
+            </div>`).join('')}
+        </div>
+      </div>`).join('') || '<div class="empty-state"><span class="empty-icon">🍽️</span><h3>Menu coming soon</h3></div>';
+  } catch {
+    // Demo menu
+    document.getElementById('menu-content').innerHTML = `
+      <div style="margin-bottom:2rem">
+        <h3 style="margin-bottom:1rem;color:var(--brown);font-size:1rem;text-transform:uppercase">Starters</h3>
+        <div style="display:flex;flex-direction:column;gap:.75rem">
+          <div style="display:flex;justify-content:space-between;align-items:start;padding:1rem;background:var(--cream-dk);border-radius:var(--radius-sm)"><div><div style="font-weight:500">🟢 Vegetable Samosa</div><div style="font-size:.85rem;color:var(--text-lt)">Crispy pastry with spiced potato filling</div></div><div style="font-weight:600;color:var(--brown)">₹40/plate</div></div>
+          <div style="display:flex;justify-content:space-between;align-items:start;padding:1rem;background:var(--cream-dk);border-radius:var(--radius-sm)"><div><div style="font-weight:500">🔴 Chicken 65</div><div style="font-size:.85rem;color:var(--text-lt)">Spicy fried chicken, Andhra style</div></div><div style="font-weight:600;color:var(--brown)">₹80/plate</div></div>
+        </div>
+      </div>
+      <div style="margin-bottom:2rem">
+        <h3 style="margin-bottom:1rem;color:var(--brown);font-size:1rem;text-transform:uppercase">Main Course</h3>
+        <div style="display:flex;flex-direction:column;gap:.75rem">
+          <div style="display:flex;justify-content:space-between;align-items:start;padding:1rem;background:var(--cream-dk);border-radius:var(--radius-sm)"><div><div style="font-weight:500">🟢 Dal Tadka</div></div><div style="font-weight:600;color:var(--brown)">₹60/plate</div></div>
+          <div style="display:flex;justify-content:space-between;align-items:start;padding:1rem;background:var(--cream-dk);border-radius:var(--radius-sm)"><div><div style="font-weight:500">🔴 Mutton Biryani</div><div style="font-size:.85rem;color:var(--text-lt)">Dum cooked Hyderabadi style</div></div><div style="font-weight:600;color:var(--brown)">₹220/plate</div></div>
+        </div>
+      </div>`;
+  }
+}
+
+async function loadReviews() {
+  try {
+    const res = await API.getReviews(catererId);
+    const reviews = res.data?.content || res.data || res || [];
+    const avg = catererData?.averageRating || 0;
+    document.getElementById('avg-rating').textContent = avg.toFixed(1);
+    document.getElementById('avg-stars').textContent = starsHtml(avg);
+    document.getElementById('total-reviews').textContent = `${catererData?.totalReviews||0} reviews`;
+
+    document.getElementById('reviews-list').innerHTML = reviews.length ? reviews.map(r => `
+      <div class="card" style="margin-bottom:1rem">
+        <div class="card-body" style="padding:1.25rem">
+          <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:.75rem">
+            <div style="display:flex;align-items:center;gap:.75rem">
+              <div class="avatar">${(r.reviewerName||'?')[0]}</div>
+              <div>
+                <div style="font-weight:600">${r.reviewerName||'Anonymous'}</div>
+                <div style="font-size:.8rem;color:var(--text-lt)">${r.occasion||''} · ${formatDate(r.createdAt)}</div>
+              </div>
+            </div>
+            <div class="stars">${starsHtml(r.overallRating)}</div>
+          </div>
+          <p style="color:var(--text);font-size:.9rem">${r.comment||''}</p>
+        </div>
+      </div>`).join('') :
+      '<div class="empty-state"><span class="empty-icon">⭐</span><h3>No reviews yet</h3><p>Be the first to book and review!</p></div>';
+  } catch {
+    document.getElementById('avg-rating').textContent = '4.8';
+    document.getElementById('avg-stars').textContent = '★★★★★';
+    document.getElementById('total-reviews').textContent = '234 reviews';
+    document.getElementById('reviews-list').innerHTML = `
+      <div class="card" style="margin-bottom:1rem"><div class="card-body" style="padding:1.25rem">
+        <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:.75rem">
+          <div style="display:flex;align-items:center;gap:.75rem"><div class="avatar">R</div><div><div style="font-weight:600">Ravi Kumar</div><div style="font-size:.8rem;color:var(--text-lt)">Wedding · 15 Dec 2024</div></div></div>
+          <div class="stars">★★★★★</div>
+        </div>
+        <p style="color:var(--text);font-size:.9rem">Absolutely amazing food and service. Our 500 guests were thoroughly impressed. Highly recommend for weddings!</p>
+      </div></div>`;
+  }
+}
+
+function updateEstimate() {
+  const guests = parseInt(document.getElementById('book-guests').value);
+  if (!guests || !catererData) { document.getElementById('price-estimate').style.display = 'none'; return; }
+  const price = catererData.minPricePerPlate || 300;
+  const total = guests * price;
+  const advance = Math.round(total * 0.2);
+  document.getElementById('est-total').textContent = formatCurrency(total);
+  document.getElementById('est-advance').textContent = formatCurrency(advance);
+  document.getElementById('price-estimate').style.display = '';
+}
+
+async function submitBooking() {
+  if (!Auth.isLoggedIn()) {
+    toast('Please sign in to book a caterer.', 'error'); return;
+  }
+  const occasion  = document.getElementById('book-occasion').value;
+  const eventDate = document.getElementById('book-date').value;
+  const guestCount= parseInt(document.getElementById('book-guests').value);
+  const eventCity = document.getElementById('book-city').value;
+  const eventAddress = document.getElementById('book-address').value.trim();
+  const specialRequests = document.getElementById('book-notes').value.trim();
+
+  if (!occasion || !eventDate || !guestCount || !eventCity || !eventAddress) {
+    toast('Please fill in all required fields.', 'error'); return;
+  }
+
+  const btn = document.getElementById('btn-book');
+  setLoading(btn, true);
+  try {
+    await API.createBooking({ catererId, occasion, eventDate, guestCount, eventCity, eventAddress, specialRequests });
+    toast('Booking request sent! The caterer will respond within 48 hours. 🎉', 'success');
+    setTimeout(() => window.location.href = 'dashboard.html', 2000);
+  } catch (e) {
+    toast(e.message || 'Failed to send booking request.', 'error');
+  } finally { setLoading(btn, false); }
+}
+
+loadCaterer();
+</script>
+</body>
+</html>

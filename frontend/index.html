@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ruchulu 🥄 — Book the Best Caterers in Andhra & Telangana</title>
+  <meta name="description" content="Find and book top-rated caterers for weddings, corporate events, birthdays across Hyderabad, Vijayawada, Visakhapatnam and more.">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="api-config.js"></script>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <a href="/" class="nav-brand">Ruchulu 🥄</a>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="pages/search.html">Find Caterers</a></li>
+    <li><a href="pages/dashboard.html">My Bookings</a></li>
+    <li><a href="pages/caterer-register.html">Join as Caterer</a></li>
+  </ul>
+  <div class="nav-auth" id="nav-auth"></div>
+  <button class="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-badge">🏆 #1 Catering Platform in AP & TS</div>
+      <h1>Delicious Catering,<br><em>Delivered to Your Event</em></h1>
+      <p class="p" style="color:rgba(255,255,255,.85);font-size:1.15rem;margin-bottom:2rem">
+        Book FSSAI-verified caterers for weddings, corporate events, birthdays and more across Hyderabad, Vijayawada, Visakhapatnam and 9 other cities.
+      </p>
+      <div class="hero-actions">
+        <a href="pages/search.html" class="btn btn-gold btn-lg">🔍 Find Caterers</a>
+        <button onclick="showModal('modal-register')" class="btn btn-outline btn-lg" style="border-color:rgba(255,255,255,.6);color:#fff">Join as Caterer</button>
+      </div>
+      <!-- SEARCH BAR -->
+      <div class="search-bar">
+        <select id="search-city">
+          <option value="">📍 Select City</option>
+          <option>Hyderabad</option><option>Visakhapatnam</option><option>Vijayawada</option>
+          <option>Warangal</option><option>Tirupati</option><option>Guntur</option>
+          <option>Karimnagar</option><option>Nellore</option><option>Kurnool</option>
+          <option>Nizamabad</option><option>Rajahmundry</option><option>Secunderabad</option>
+        </select>
+        <div class="search-divider"></div>
+        <select id="search-occasion">
+          <option value="">🎉 Occasion</option>
+          <option value="WEDDING">Wedding</option><option value="BIRTHDAY">Birthday</option>
+          <option value="CORPORATE">Corporate</option><option value="ENGAGEMENT">Engagement</option>
+          <option value="ANNIVERSARY">Anniversary</option><option value="FESTIVAL">Festival</option>
+        </select>
+        <div class="search-divider"></div>
+        <input type="number" id="search-guests" placeholder="👥 Guests" min="1" max="10000">
+        <button class="btn btn-primary" onclick="doSearch()">Search</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="container">
+    <div class="stats-wrap">
+      <div class="stat-item"><span class="stat-num">500+</span><span class="stat-lbl">Verified Caterers</span></div>
+      <div class="stat-item"><span class="stat-num">12</span><span class="stat-lbl">Cities Covered</span></div>
+      <div class="stat-item"><span class="stat-num">10K+</span><span class="stat-lbl">Events Catered</span></div>
+      <div class="stat-item"><span class="stat-num">4.8⭐</span><span class="stat-lbl">Average Rating</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- TOP CATERERS -->
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <h2>Top Rated Caterers in Hyderabad</h2>
+      <p>Hand-picked, FSSAI-verified caterers loved by thousands of families</p>
+    </div>
+    <div class="grid-3" id="top-caterers">
+      <div class="loading-wrap"><div class="spinner"></div></div>
+    </div>
+    <div style="text-align:center;margin-top:2.5rem">
+      <a href="pages/search.html" class="btn btn-outline btn-lg">View All Caterers →</a>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="section-header">
+      <h2>How Ruchulu Works</h2>
+      <p>Book a caterer in 3 simple steps</p>
+    </div>
+    <div class="grid-3">
+      <div class="card"><div class="card-body" style="text-align:center;padding:2.5rem 1.5rem">
+        <div style="font-size:3rem;margin-bottom:1rem">🔍</div>
+        <h3>1. Search</h3>
+        <p>Filter by city, occasion, guest count, cuisine and budget to find the perfect caterer.</p>
+      </div></div>
+      <div class="card"><div class="card-body" style="text-align:center;padding:2.5rem 1.5rem">
+        <div style="font-size:3rem;margin-bottom:1rem">📅</div>
+        <h3>2. Book</h3>
+        <p>Send a booking request. The caterer responds within 48 hours. Pay just 20% advance.</p>
+      </div></div>
+      <div class="card"><div class="card-body" style="text-align:center;padding:2.5rem 1.5rem">
+        <div style="font-size:3rem;margin-bottom:1rem">🎉</div>
+        <h3>3. Celebrate</h3>
+        <p>Enjoy your event! Leave a review and help others discover great caterers.</p>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<!-- OCCASIONS -->
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <h2>Every Occasion, Perfectly Catered</h2>
+    </div>
+    <div style="display:flex;gap:1rem;flex-wrap:wrap;justify-content:center">
+      ${[['💍','Weddings'],['🎂','Birthdays'],['🏢','Corporate'],['💒','Engagements'],['🎊','Anniversaries'],['🏠','House Warming'],['👶','Baby Shower'],['🎓','Graduation'],['🪔','Festivals'],['⚰️','Funerals']].map(([e,l]) =>
+        `<button onclick="searchOccasion('${l.toUpperCase()}')" style="background:var(--white);border:1.5px solid var(--sand);border-radius:var(--radius);padding:.75rem 1.5rem;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:500;color:var(--text);transition:var(--transition);display:flex;align-items:center;gap:.5rem"
+          onmouseover="this.style.borderColor='var(--brown)';this.style.color='var(--brown)'" 
+          onmouseout="this.style.borderColor='var(--sand)';this.style.color='var(--text)'">${e} ${l}</button>`
+      ).join('')}
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="section" style="background:linear-gradient(135deg,var(--brown) 0%,var(--brown-lt) 100%);text-align:center;padding:5rem 0">
+  <div class="container">
+    <h2 style="color:#fff;margin-bottom:1rem">Are You a Caterer?</h2>
+    <p style="color:rgba(255,255,255,.8);font-size:1.1rem;margin-bottom:2rem">Join 500+ caterers on Ruchulu and grow your business. Free to register.</p>
+    <a href="pages/caterer-register.html" class="btn btn-gold btn-lg">Register Your Catering Business</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer style="background:var(--text);color:rgba(255,255,255,.7);padding:3rem 0">
+  <div class="container">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:2rem;margin-bottom:2rem">
+      <div>
+        <div style="font-family:'Playfair Display',serif;font-size:1.3rem;color:#fff;margin-bottom:.75rem">Ruchulu 🥄</div>
+        <p style="color:rgba(255,255,255,.6);font-size:.9rem">Connecting great caterers with wonderful families across Andhra Pradesh and Telangana.</p>
+      </div>
+      <div>
+        <h4 style="color:#fff;margin-bottom:.75rem;font-size:.95rem">For Customers</h4>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:.4rem">
+          <li><a href="pages/search.html" style="color:rgba(255,255,255,.6);font-size:.9rem">Find Caterers</a></li>
+          <li><a href="pages/dashboard.html" style="color:rgba(255,255,255,.6);font-size:.9rem">My Bookings</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 style="color:#fff;margin-bottom:.75rem;font-size:.95rem">For Caterers</h4>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:.4rem">
+          <li><a href="pages/caterer-register.html" style="color:rgba(255,255,255,.6);font-size:.9rem">Join as Caterer</a></li>
+          <li><a href="pages/caterer-dashboard.html" style="color:rgba(255,255,255,.6);font-size:.9rem">Caterer Dashboard</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 style="color:#fff;margin-bottom:.75rem;font-size:.95rem">Cities</h4>
+        <p style="color:rgba(255,255,255,.6);font-size:.85rem;line-height:1.8">Hyderabad · Visakhapatnam · Vijayawada · Warangal · Tirupati · Guntur · Karimnagar · Nellore</p>
+      </div>
+    </div>
+    <div style="border-top:1px solid rgba(255,255,255,.1);padding-top:1.5rem;text-align:center;font-size:.85rem">
+      © 2025 Ruchulu. All rights reserved. | FSSAI Verified Platform
+    </div>
+  </div>
+</footer>
+
+<!-- AUTH MODALS -->
+<div class="modal-overlay" id="modal-login">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Welcome Back 🥄</h3>
+      <button class="modal-close" onclick="closeModal('modal-login')">×</button>
+    </div>
+    <div class="modal-body">
+      <div id="login-step1">
+        <p style="margin-bottom:1.5rem;color:var(--text-lt)">Enter your Gmail to receive a login OTP.</p>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input type="email" class="form-control" id="login-email" placeholder="yourname@gmail.com">
+          <span class="form-error" id="login-email-err">Please enter a valid Gmail address.</span>
+        </div>
+        <button class="btn btn-primary" style="width:100%" id="btn-send-otp" onclick="sendLoginOtp()">Send OTP</button>
+      </div>
+      <div id="login-step2" style="display:none;text-align:center">
+        <p style="margin-bottom:.5rem">OTP sent to <strong id="login-email-display"></strong></p>
+        <p style="font-size:.85rem;color:var(--text-lt);margin-bottom:1rem">Valid for 10 minutes</p>
+        <div class="otp-wrap">
+          <input class="otp-input" maxlength="1" type="text" pattern="[0-9]">
+          <input class="otp-input" maxlength="1" type="text" pattern="[0-9]">
+          <input class="otp-input" maxlength="1" type="text" pattern="[0-9]">
+          <input class="otp-input" maxlength="1" type="text" pattern="[0-9]">
+          <input class="otp-input" maxlength="1" type="text" pattern="[0-9]">
+          <input class="otp-input" maxlength="1" type="text" pattern="[0-9]">
+        </div>
+        <button class="btn btn-primary" style="width:100%;margin-bottom:.75rem" id="btn-verify-otp" onclick="verifyLoginOtp()">Verify & Sign In</button>
+        <button class="btn btn-outline" style="width:100%" onclick="document.getElementById('login-step1').style.display='';document.getElementById('login-step2').style.display='none'">← Change Email</button>
+      </div>
+    </div>
+    <div class="modal-footer" style="justify-content:center">
+      <p style="font-size:.875rem;color:var(--text-lt)">New user? <button onclick="closeModal('modal-login');showModal('modal-register')" style="background:none;border:none;color:var(--brown);font-weight:600;cursor:pointer">Register here</button></p>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-register">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Create Your Account</h3>
+      <button class="modal-close" onclick="closeModal('modal-register')">×</button>
+    </div>
+    <div class="modal-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+        <div class="form-group"><label class="form-label">First Name</label><input type="text" class="form-control" id="reg-first" placeholder="Ravi"></div>
+        <div class="form-group"><label class="form-label">Last Name</label><input type="text" class="form-control" id="reg-last" placeholder="Kumar"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Gmail Address</label><input type="email" class="form-control" id="reg-email" placeholder="yourname@gmail.com"></div>
+      <div class="form-group"><label class="form-label">Phone Number</label><input type="tel" class="form-control" id="reg-phone" placeholder="9876543210" maxlength="10"></div>
+      <div class="form-group">
+        <label class="form-label">City</label>
+        <select class="form-control" id="reg-city">
+          <option value="">Select your city</option>
+          <option>Hyderabad</option><option>Visakhapatnam</option><option>Vijayawada</option>
+          <option>Warangal</option><option>Tirupati</option><option>Guntur</option>
+          <option>Karimnagar</option><option>Nellore</option><option>Kurnool</option>
+          <option>Nizamabad</option><option>Rajahmundry</option><option>Secunderabad</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password (min 8 chars, 1 uppercase, 1 number, 1 special)</label>
+        <input type="password" class="form-control" id="reg-password" placeholder="••••••••">
+      </div>
+      <div class="form-group">
+        <label class="form-label">I want to</label>
+        <select class="form-control" id="reg-role">
+          <option value="CUSTOMER">Book caterers for my events</option>
+          <option value="CATERER">Offer my catering services</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" style="width:100%" id="btn-register" onclick="doRegister()">Create Account</button>
+    </div>
+    <div class="modal-footer" style="justify-content:center">
+      <p style="font-size:.875rem;color:var(--text-lt)">Already have an account? <button onclick="closeModal('modal-register');showModal('modal-login')" style="background:none;border:none;color:var(--brown);font-weight:600;cursor:pointer">Sign in</button></p>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container"></div>
+
+<script src="api-config.js"></script>
+<script src="js/api.js"></script>
+<script>
+async function loadTopCaterers() {
+  try {
+    const data = await API.topRated('Hyderabad');
+    const list = data.data || data || [];
+    const container = document.getElementById('top-caterers');
+    if (!list.length) {
+      container.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><span class="empty-icon">🍽️</span><h3>No caterers yet</h3><p>Be the first to register!</p></div>`;
+      return;
+    }
+    container.innerHTML = list.slice(0,6).map(renderCatererCard).join('');
+  } catch (e) {
+    // Show sample cards if backend not running
+    document.getElementById('top-caterers').innerHTML = [
+      {id:'cat-001',businessName:'Lakshmi Catering Services',city:'Hyderabad',averageRating:4.8,totalReviews:234,minGuests:50,maxGuests:5000,minPricePerPlate:350,maxPricePerPlate:800,fssaiVerified:true,occasions:['WEDDING','CORPORATE','BIRTHDAY']},
+      {id:'cat-002',businessName:'Royal Feast Caterers',city:'Hyderabad',averageRating:4.6,totalReviews:187,minGuests:100,maxGuests:3000,minPricePerPlate:400,maxPricePerPlate:900,fssaiVerified:true,occasions:['WEDDING','ENGAGEMENT','ANNIVERSARY']},
+      {id:'cat-003',businessName:'Sri Venkateswara Caterers',city:'Hyderabad',averageRating:4.5,totalReviews:142,minGuests:50,maxGuests:2000,minPricePerPlate:280,maxPricePerPlate:600,fssaiVerified:false,occasions:['BIRTHDAY','HOUSE_WARMING','FESTIVAL']},
+    ].map(renderCatererCard).join('');
+  }
+}
+
+function doSearch() {
+  const city = document.getElementById('search-city').value;
+  const occasion = document.getElementById('search-occasion').value;
+  const guests = document.getElementById('search-guests').value;
+  const params = new URLSearchParams();
+  if (city) params.set('city', city);
+  if (occasion) params.set('occasion', occasion);
+  if (guests) params.set('guestCount', guests);
+  window.location.href = `pages/search.html?${params}`;
+}
+
+function searchOccasion(occ) {
+  window.location.href = `pages/search.html?occasion=${occ}`;
+}
+
+// ── Login flow ────────────────────────────────────────────
+async function sendLoginOtp() {
+  const email = document.getElementById('login-email').value.trim();
+  if (!email.endsWith('@gmail.com')) {
+    document.getElementById('login-email-err').classList.add('show'); return;
+  }
+  document.getElementById('login-email-err').classList.remove('show');
+  const btn = document.getElementById('btn-send-otp');
+  setLoading(btn, true);
+  try {
+    await API.requestOtp({ email, purpose: 'LOGIN' });
+    document.getElementById('login-email-display').textContent = email;
+    document.getElementById('login-step1').style.display = 'none';
+    document.getElementById('login-step2').style.display = '';
+    initOtpInputs();
+    toast('OTP sent to ' + email, 'success');
+  } catch (e) {
+    toast(e.message || 'Failed to send OTP', 'error');
+  } finally { setLoading(btn, false); }
+}
+
+async function verifyLoginOtp() {
+  const email = document.getElementById('login-email').value.trim();
+  const otp = getOtpValue();
+  if (otp.length < 6) { toast('Enter the 6-digit OTP', 'error'); return; }
+  const btn = document.getElementById('btn-verify-otp');
+  setLoading(btn, true);
+  try {
+    const res = await API.verifyOtp({ email, otp, purpose: 'LOGIN' });
+    Auth.setToken(res.token || res.data?.token);
+    Auth.setUser(res.user || res.data?.user);
+    toast('Signed in successfully! Welcome back 🎉', 'success');
+    closeModal('modal-login');
+    setTimeout(() => window.location.reload(), 800);
+  } catch (e) {
+    toast(e.message || 'Invalid OTP', 'error');
+  } finally { setLoading(btn, false); }
+}
+
+// ── Register flow ─────────────────────────────────────────
+async function doRegister() {
+  const fields = {
+    firstName: document.getElementById('reg-first').value.trim(),
+    lastName:  document.getElementById('reg-last').value.trim(),
+    email:     document.getElementById('reg-email').value.trim(),
+    phone:     document.getElementById('reg-phone').value.trim(),
+    city:      document.getElementById('reg-city').value,
+    password:  document.getElementById('reg-password').value,
+    role:      document.getElementById('reg-role').value,
+  };
+  if (!fields.firstName || !fields.email || !fields.phone || !fields.city || !fields.password) {
+    toast('Please fill in all fields.', 'error'); return;
+  }
+  if (!fields.email.endsWith('@gmail.com')) {
+    toast('Only Gmail addresses are accepted.', 'error'); return;
+  }
+  const btn = document.getElementById('btn-register');
+  setLoading(btn, true);
+  try {
+    const res = await API.register(fields);
+    Auth.setToken(res.token || res.data?.token);
+    Auth.setUser(res.user || res.data?.user);
+    toast('Account created! Welcome to Ruchulu 🥄', 'success');
+    closeModal('modal-register');
+    setTimeout(() => window.location.reload(), 800);
+  } catch (e) {
+    toast(e.message || 'Registration failed', 'error');
+  } finally { setLoading(btn, false); }
+}
+
+loadTopCaterers();
+</script>
+</body>
+</html>

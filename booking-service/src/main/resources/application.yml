@@ -1,0 +1,90 @@
+spring:
+  application:
+    name: booking-service
+  profiles:
+    active: h2
+
+server:
+  port: 8083
+  servlet:
+    context-path: /api/v1
+
+---
+spring:
+  config:
+    activate:
+      on-profile: h2
+  datasource:
+    url: jdbc:h2:mem:ruchulu_bookings;DB_CLOSE_DELAY=-1;MODE=PostgreSQL
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  sql:
+    init:
+      mode: always
+      data-locations: classpath:data-h2.sql
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME:ruchulu.noreply@gmail.com}
+    password: ${MAIL_PASSWORD:your-app-password}
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+
+---
+spring:
+  config:
+    activate:
+      on-profile: postgres
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:ruchulu_bookings}
+    driver-class-name: org.postgresql.Driver
+    username: ${DB_USERNAME:ruchulu_admin}
+    password: ${DB_PASSWORD:ruchulu_pass}
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+
+---
+app:
+  jwt:
+    secret: ${JWT_SECRET:cnVjaHVsdS1qd3Qtc2VjcmV0LWtleS1tdXN0LWJlLWF0LWxlYXN0LTI1Ni1iaXRzLWxvbmctZm9yLWhzMjU2}
+  cors:
+    allowed-origins:
+      - http://localhost:3000
+      - http://localhost:5500
+      - http://127.0.0.1:5500
+      - https://ruchulu.netlify.app
+  booking:
+    max-advance-days: 365
+    min-advance-days: 1
+    auto-expire-hours: 48       # auto-expire PENDING bookings after 48h
+    cancellation-window-hours: 24
+
+logging:
+  level:
+    com.ruchulu: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics

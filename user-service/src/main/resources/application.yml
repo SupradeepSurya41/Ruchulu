@@ -1,0 +1,185 @@
+# ================================================================
+#  Ruchulu — User Service application.yml
+#  Default profile: h2 (switch to 'postgres' for production)
+# ================================================================
+spring:
+  application:
+    name: user-service
+  profiles:
+    active: h2
+
+server:
+  port: 8081
+  servlet:
+    context-path: /api/v1
+
+# ================================================================
+# PROFILE: h2  — in-memory DB for local dev / dry-run / CI tests
+# ================================================================
+---
+spring:
+  config:
+    activate:
+      on-profile: h2
+
+  datasource:
+    url: jdbc:h2:mem:ruchulu_users;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=PostgreSQL
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        web-allow-others: false
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  sql:
+    init:
+      mode: always
+      data-locations: classpath:data-h2.sql
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME:ruchulu.noreply@gmail.com}
+    password: ${MAIL_PASSWORD:your-app-password}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+
+  cache:
+    type: simple
+
+logging:
+  level:
+    com.ruchulu: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org.springframework.security: INFO
+
+# ================================================================
+# PROFILE: postgres  — production PostgreSQL
+# ================================================================
+---
+spring:
+  config:
+    activate:
+      on-profile: postgres
+
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:ruchulu_users}
+    driver-class-name: org.postgresql.Driver
+    username: ${DB_USERNAME:ruchulu_admin}
+    password: ${DB_PASSWORD:ruchulu_pass}
+    hikari:
+      pool-name: RuchuluHikariPool
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+        jdbc:
+          lob:
+            non_contextual_creation: true
+        default_schema: public
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+        mime:
+          charset: UTF-8
+
+  cache:
+    type: simple
+
+  h2:
+    console:
+      enabled: false
+
+logging:
+  level:
+    com.ruchulu: INFO
+    org.hibernate.SQL: WARN
+
+# ================================================================
+# App-level config (shared across all profiles)
+# ================================================================
+---
+app:
+  jwt:
+    secret: ${JWT_SECRET:cnVjaHVsdS1qd3Qtc2VjcmV0LWtleS1tdXN0LWJlLWF0LWxlYXN0LTI1Ni1iaXRzLWxvbmctZm9yLWhzMjU2}
+    access-token-expiry-ms: 86400000       # 24 hours
+    refresh-token-expiry-ms: 604800000     # 7 days
+
+  otp:
+    length: 6
+    expiry-minutes: 10
+    max-attempts: 3
+    resend-cooldown-seconds: 60
+
+  cors:
+    allowed-origins:
+      - http://localhost:3000
+      - http://localhost:5500
+      - http://127.0.0.1:5500
+      - https://ruchulu.netlify.app
+
+  email:
+    # Comma-separated list of known disposable/temp email domains to block
+    blocked-domains: >
+      mailinator.com,guerrillamail.com,10minutemail.com,tempmail.com,
+      throwam.com,yopmail.com,trashmail.com,maildrop.cc,dispostable.com,
+      sharklasers.com,guerrillamailblock.com,grr.la,guerrillamail.info,
+      guerrillamail.biz,guerrillamail.de,guerrillamail.net,guerrillamail.org,
+      spam4.me,spamgourmet.com,spamgourmet.net,spamgourmet.org,
+      fakeinbox.com,mailnull.com,spamfree24.org,powered.name,
+      nospam.ze.tc,tempr.email,spamex.com,throwam.com,incognitomail.com,
+      spamevader.com,trashmail.at,trashmail.io,trashmail.me,trashmail.net,
+      discard.email,spamthisplease.com,binkmail.com,bobmail.info
+
+  anthropic:
+    api-key: ${ANTHROPIC_API_KEY:your-api-key-here}
+    model: claude-sonnet-4-20250514
+    max-tokens: 1000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,env
+  endpoint:
+    health:
+      show-details: when-authorized

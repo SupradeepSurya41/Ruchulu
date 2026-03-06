@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Caterer Dashboard — Ruchulu 🥄</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<nav class="navbar">
+  <a href="../index.html" class="nav-brand">Ruchulu 🥄</a>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="caterer-dashboard.html" style="color:var(--brown)">Dashboard</a></li>
+    <li><a href="caterer-profile.html">My Profile</a></li>
+  </ul>
+  <div class="nav-auth" id="nav-auth"></div>
+  <button class="hamburger"><span></span><span></span><span></span></button>
+</nav>
+
+<div class="page-header">
+  <div class="container">
+    <h1 id="caterer-title">Caterer Dashboard</h1>
+    <p>Manage your bookings and catering business</p>
+  </div>
+</div>
+
+<section class="section" style="padding-top:2rem">
+  <div class="container">
+
+    <!-- Stats -->
+    <div class="grid-2" style="grid-template-columns:repeat(auto-fill,minmax(160px,1fr));margin-bottom:2rem">
+      <div class="card"><div class="card-body" style="text-align:center">
+        <div style="font-size:2rem;font-family:'Playfair Display',serif;color:var(--gold)" id="s-pending">—</div>
+        <div style="font-size:.85rem;color:var(--text-lt)">New Requests</div>
+      </div></div>
+      <div class="card"><div class="card-body" style="text-align:center">
+        <div style="font-size:2rem;font-family:'Playfair Display',serif;color:var(--success)" id="s-confirmed">—</div>
+        <div style="font-size:.85rem;color:var(--text-lt)">Confirmed</div>
+      </div></div>
+      <div class="card"><div class="card-body" style="text-align:center">
+        <div style="font-size:2rem;font-family:'Playfair Display',serif;color:var(--brown)" id="s-completed">—</div>
+        <div style="font-size:.85rem;color:var(--text-lt)">Completed</div>
+      </div></div>
+      <div class="card"><div class="card-body" style="text-align:center">
+        <div style="font-size:2rem;font-family:'Playfair Display',serif;color:var(--brown)" id="s-revenue">—</div>
+        <div style="font-size:.85rem;color:var(--text-lt)">Total Revenue</div>
+      </div></div>
+    </div>
+
+    <!-- Incoming Bookings -->
+    <div class="tabs">
+      <button class="tab-btn active" onclick="loadBookings('PENDING')">New Requests</button>
+      <button class="tab-btn" onclick="loadBookings('CONFIRMED')">Confirmed</button>
+      <button class="tab-btn" onclick="loadBookings('IN_PROGRESS')">In Progress</button>
+      <button class="tab-btn" onclick="loadBookings('COMPLETED')">Completed</button>
+      <button class="tab-btn" onclick="loadBookings('')">All</button>
+    </div>
+    <div id="bookings-list"><div class="loading-wrap"><div class="spinner"></div></div></div>
+  </div>
+</section>
+
+<!-- BOOKING ACTION MODAL -->
+<div class="modal-overlay" id="modal-action">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-header">
+      <h3 id="action-title">Booking Request</h3>
+      <button class="modal-close" onclick="closeModal('modal-action')">×</button>
+    </div>
+    <div class="modal-body" id="action-body"></div>
+    <div class="modal-footer" id="action-footer"></div>
+  </div>
+</div>
+
+<div class="toast-container"></div>
+<script src="../api-config.js"></script>
+<script src="../js/api.js"></script>
+<script>
+let selectedId = null;
+let selectedStatus = null;
+
+async function init() {
+  if (!Auth.isLoggedIn()) {
+    window.location.href = '../index.html'; return;
+  }
+  loadBookings('PENDING');
+  loadStats();
+}
+
+async function loadStats() {
+  try {
+    const res = await API.getCatBookings('');
+    const all = res.data?.content || res.data || res || [];
+    document.getElementById('s-pending').textContent   = all.filter(b=>b.status==='PENDING').length;
+    document.getElementById('s-confirmed').textContent = all.filter(b=>b.status==='CONFIRMED').length;
+    document.getElementById('s-completed').textContent = all.filter(b=>b.status==='COMPLETED').length;
+    const rev = all.filter(b=>b.status==='COMPLETED').reduce((s,b)=>s+(b.totalAmount||0),0);
+    document.getElementById('s-revenue').textContent   = '₹'+Math.round(rev/1000)+'K';
+  } catch {
+    document.getElementById('s-pending').textContent='2';
+    document.getElementById('s-confirmed').textContent='3';
+    document.getElementById('s-completed').textContent='12';
+    document.getElementById('s-revenue').textContent='₹85K';
+  }
+}
+
+async function loadBookings(status) {
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  event?.target?.classList?.add('active');
+  document.getElementById('bookings-list').innerHTML='<div class="loading-wrap"><div class="spinner"></div></div>';
+  try {
+    const res = await API.getCatBookings(status);
+    const bookings = res.data?.content || res.data || res || [];
+    renderBookings(bookings, status);
+  } catch {
+    // Demo
+    renderBookings([
+      {id:'bk-001',customerName:'Ravi Kumar',customerPhone:'9876543210',occasion:'WEDDING',eventDate:'2025-12-20',eventCity:'Hyderabad',guestCount:500,totalAmount:175000,advanceAmount:35000,status:'PENDING',paymentStatus:'UNPAID',createdAt:'2025-11-01',specialRequests:'No pork. Need 5 servers.'},
+      {id:'bk-002',customerName:'Priya Sharma',customerPhone:'9876543211',occasion:'BIRTHDAY',eventDate:'2025-12-28',eventCity:'Hyderabad',guestCount:100,totalAmount:45000,advanceAmount:9000,status:'PENDING',paymentStatus:'UNPAID',createdAt:'2025-11-10'},
+    ], status);
+  }
+}
+
+function renderBookings(bookings, status) {
+  const el = document.getElementById('bookings-list');
+  if (!bookings.length) {
+    el.innerHTML=`<div class="empty-state"><span class="empty-icon">📭</span><h3>No ${status||''} bookings</h3></div>`; return;
+  }
+  el.innerHTML = bookings.map(b => `
+    <div class="card" style="margin-bottom:1rem">
+      <div class="card-body" style="padding:1.25rem">
+        <div style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:1rem">
+          <div>
+            <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.5rem">
+              <h3 style="font-size:1rem;margin:0">${b.customerName}</h3>
+              ${statusBadge(b.status)}
+            </div>
+            <div style="display:flex;gap:1.5rem;flex-wrap:wrap;margin-bottom:.75rem">
+              <span style="font-size:.85rem;color:var(--text-lt)">🎉 ${b.occasion?.replace(/_/g,' ')}</span>
+              <span style="font-size:.85rem;color:var(--text-lt)">📅 ${formatDate(b.eventDate)}</span>
+              <span style="font-size:.85rem;color:var(--text-lt)">📍 ${b.eventCity}</span>
+              <span style="font-size:.85rem;color:var(--text-lt)">👥 ${b.guestCount} guests</span>
+              <span style="font-size:.85rem;color:var(--text-lt)">📞 ${b.customerPhone||'—'}</span>
+            </div>
+            ${b.specialRequests?`<div style="font-size:.85rem;background:var(--cream-dk);padding:.5rem .75rem;border-radius:var(--radius-sm)">📝 ${b.specialRequests}</div>`:''}
+          </div>
+          <div style="text-align:right">
+            <div style="font-family:'Playfair Display',serif;font-size:1.15rem;color:var(--brown);font-weight:600">${formatCurrency(b.totalAmount)}</div>
+            <div style="font-size:.78rem;color:var(--text-lt);margin-bottom:.75rem">${b.paymentStatus?.replace(/_/g,' ')}</div>
+            ${b.status==='PENDING' ? `
+              <div style="display:flex;gap:.5rem;flex-wrap:wrap;justify-content:flex-end">
+                <button class="btn btn-success btn-sm" onclick="openAction('${b.id}','confirm')">✅ Confirm</button>
+                <button class="btn btn-danger btn-sm" onclick="openAction('${b.id}','reject')">❌ Reject</button>
+              </div>` : ''}
+            ${b.status==='CONFIRMED' ? `<button class="btn btn-primary btn-sm" onclick="openAction('${b.id}','complete')">🎉 Mark Complete</button>` : ''}
+            ${b.status==='IN_PROGRESS' ? `<button class="btn btn-primary btn-sm" onclick="openAction('${b.id}','complete')">✅ Mark Completed</button>` : ''}
+          </div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function openAction(id, action) {
+  selectedId = id; selectedStatus = action;
+  const titles = { confirm:'Confirm Booking', reject:'Reject Booking', complete:'Mark as Completed' };
+  document.getElementById('action-title').textContent = titles[action];
+
+  if (action === 'confirm') {
+    document.getElementById('action-body').innerHTML = `
+      <p style="margin-bottom:1rem">Confirm this booking? The customer will be notified immediately.</p>
+      <div class="form-group"><label class="form-label">Notes for customer (optional)</label>
+      <textarea class="form-control" id="action-notes" rows="3" placeholder="Any instructions or notes for the customer..."></textarea></div>`;
+    document.getElementById('action-footer').innerHTML = `
+      <button class="btn btn-outline" onclick="closeModal('modal-action')">Cancel</button>
+      <button class="btn btn-success" onclick="doAction()">✅ Confirm Booking</button>`;
+  } else if (action === 'reject') {
+    document.getElementById('action-body').innerHTML = `
+      <p style="margin-bottom:1rem;color:var(--danger)">Reject this booking? The customer will be notified.</p>
+      <div class="form-group"><label class="form-label">Reason for rejection *</label>
+      <textarea class="form-control" id="action-notes" rows="3" placeholder="e.g. Date unavailable, outside service area..."></textarea></div>`;
+    document.getElementById('action-footer').innerHTML = `
+      <button class="btn btn-outline" onclick="closeModal('modal-action')">Cancel</button>
+      <button class="btn btn-danger" onclick="doAction()">❌ Reject Booking</button>`;
+  } else if (action === 'complete') {
+    document.getElementById('action-body').innerHTML = `<p>Mark this event as completed? This will unlock the customer's review.</p>`;
+    document.getElementById('action-footer').innerHTML = `
+      <button class="btn btn-outline" onclick="closeModal('modal-action')">Cancel</button>
+      <button class="btn btn-primary" onclick="doAction()">🎉 Mark Completed</button>`;
+  }
+  showModal('modal-action');
+}
+
+async function doAction() {
+  const notes = document.getElementById('action-notes')?.value?.trim() || '';
+  const btn = document.querySelector('#action-footer .btn:last-child');
+  setLoading(btn, true);
+  try {
+    if (selectedStatus === 'confirm')   await API.confirmBooking(selectedId, notes);
+    if (selectedStatus === 'reject')    await API.rejectBooking(selectedId, notes);
+    if (selectedStatus === 'complete')  await API.completeBooking(selectedId);
+    toast('Done! Booking updated and customer notified. 🎉', 'success');
+    closeModal('modal-action');
+    loadBookings('PENDING');
+    loadStats();
+  } catch (e) {
+    toast(e.message || 'Action failed.', 'error');
+  } finally { setLoading(btn, false); }
+}
+
+init();
+</script>
+</body>
+</html>
