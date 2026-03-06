@@ -11,7 +11,7 @@
     <version>1.0.0</version>
     <packaging>pom</packaging>
 
-    <n>Ruchulu Parent POM</n>
+    <name>Ruchulu Parent POM</name>
     <description>Parent POM — Q1: user-service (8081), Q2: caterer-service (8082) booking-service (8083), Q3: notification-service (8084)</description>
 
     <modules>
